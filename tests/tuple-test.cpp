@@ -94,8 +94,17 @@ TEST(tuple_cat_t_determines_the_tuple_type_that_yields_tuple_concatenation)
 	using tuple_a = tuple<int, float, char>;
 	using tuple_b = tuple<unsigned, double>;
 
-	using concatenated_tuple = tuple_cat_type_t<tuple_a, tuple_b, tuple_a>;
-	using expected_tuple = tuple<int, float, char, unsigned, double, int, float, char>;
+	using concatenated_tuple = tuple_cat_type_t<
+		tuple_a, 
+		tuple_b, 
+		tuple_a
+	>;
+	using expected_tuple = tuple<
+		int, float, char,	// tuple_a
+		unsigned, double,	// tuple_b
+		int, float, char	// tuple_a
+	>;
+
 	TEST_ASSERT(typeid(concatenated_tuple) == typeid(expected_tuple));
 }
 
@@ -111,16 +120,18 @@ TEST(operator_equal_equal_works_with_tuples)
 	TEST_ASSERT(!(a != c));
 }
 
-TEST(operator_equal_equal_works_with_tuples)
+TEST(tuple_cat_returns_the_correct_type)
 {
 	const tuple<int, char> a{ 1, 'a' };
-	const tuple<int, char> b{ 2, 'b' };
-	const tuple<int, char> c = a;
+	const tuple<bool, float> b{ false, 3.f };
 
-	TEST_ASSERT(a != b);
-	TEST_ASSERT(a == c);
-	TEST_ASSERT(!(a == b));
-	TEST_ASSERT(!(a != c));
+	using expected_tuple = tuple<
+		int, char,		// a
+		bool, float,	// b
+		int, char		// a
+	>;
+
+	TEST_ASSERT(typeid(tuple_cat(a, b, a)) == typeid(expected_tuple));
 }
 
 

@@ -104,13 +104,6 @@ namespace impl
 	{
 		using type = tuple<Ts ...>;
 	};
-
-
-	template <typename ... Tuples>
-	auto tuple_cat(Tuples & ... tuples)
-	{
-		return;
-	}
 }
 
 // is_tuple 
@@ -146,7 +139,7 @@ auto make_tuple(Ts && ... vs)
 }
 
 template <typename ... Tuples>
-auto tuple_cat(Tuples & ... tuples)
+auto tuple_cat(const Tuples & ... tuples)
 {
-	return ::impl::tuple_cat(tuples...);
+	return tuple_cat_type_t<Tuples ...>{ };
 }
