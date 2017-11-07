@@ -17,7 +17,7 @@
 //	[x] get
 //	[x] is_tuple
 //	[] tie
-//	[] tuple_cat
+//	[x] tuple_cat
 //	[x] tuple_element
 //	[] make_from_tuple
 //	[] forward_as_tuple
@@ -149,6 +149,23 @@ TEST(tuple_cat_returns_the_correct_value)
 	const expected_tuple_type expected_tuple{ 1, 'a', false, 3.f, 1, 'a' };
 	TEST_ASSERT(concatenated_tuple == expected_tuple);
 }
+
+TEST(changing_values_on_a_tuple_returned_by_tie_changed_the_original_variables)
+{
+	int i = 10;
+	double d = 4.0;
+	char c = '3';
+
+	tuple<double &, int &, char &> t = tie(d, i, c);
+
+	get<0>(t) = 7.0;
+	get<2>(t) = 'd';
+
+	TEST_ASSERT(i == 10);
+	TEST_ASSERT(d == 7.0);
+	TEST_ASSERT(c == 'd');
+}
+
 
 
 

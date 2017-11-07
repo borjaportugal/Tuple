@@ -56,7 +56,6 @@ public:
 
 	T _value;
 	
-private:
 };
 
 namespace impl
@@ -155,4 +154,10 @@ auto tuple_cat(const Tuples & ... tuples)
 {
 	tuple_cat_type_t<Tuples ...> new_tuple(tuples ...);
 	return new_tuple;
+}
+
+template <typename ... Ts>
+auto tie(Ts & ... vs)
+{
+	return tuple<Ts & ...>{ vs ... };
 }
