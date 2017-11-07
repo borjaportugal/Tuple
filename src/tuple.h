@@ -32,6 +32,18 @@ public:
 		, _value{ std::forward<T>(t) }
 	{}
 
+	template <typename U, typename ... Us, typename ... Tuples>
+	tuple(const tuple<U, Us ...> & t, const Tuples & ... tuples)
+		: base{ (const tuple<Us...>&)t, tuples ... }
+		, _value{ get<0>(t) }
+	{}
+
+	template <typename U, typename ... Tuples>
+	tuple(const tuple<U> & t, const Tuples & ... tuples)
+		: base{ tuples ... }
+		, _value{ get<0>(t) }
+	{}
+
 	bool operator==(const tuple & rhs) const
 	{
 		return _value == rhs._value && base::operator==(rhs);
@@ -141,5 +153,6 @@ auto make_tuple(Ts && ... vs)
 template <typename ... Tuples>
 auto tuple_cat(const Tuples & ... tuples)
 {
-	return tuple_cat_type_t<Tuples ...>{ };
+	tuple_cat_type_t<Tuples ...> new_tuple(tuples ...);
+	return new_tuple;
 }

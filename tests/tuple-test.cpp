@@ -125,13 +125,29 @@ TEST(tuple_cat_returns_the_correct_type)
 	const tuple<int, char> a{ 1, 'a' };
 	const tuple<bool, float> b{ false, 3.f };
 
-	using expected_tuple = tuple<
+	using expected_tuple_type = tuple<
 		int, char,		// a
 		bool, float,	// b
 		int, char		// a
 	>;
 
-	TEST_ASSERT(typeid(tuple_cat(a, b, a)) == typeid(expected_tuple));
+	TEST_ASSERT(typeid(tuple_cat(a, b, a)) == typeid(expected_tuple_type));
+}
+
+TEST(tuple_cat_returns_the_correct_value)
+{
+	const tuple<int, char> a{ 1, 'a' };
+	const tuple<bool, float> b{ false, 3.f };
+	
+	using expected_tuple_type = tuple<
+		int, char,		// a
+		bool, float,	// b
+		int, char		// a
+	>;
+
+	const expected_tuple_type concatenated_tuple = tuple_cat(a, b, a);
+	const expected_tuple_type expected_tuple{ 1, 'a', false, 3.f, 1, 'a' };
+	TEST_ASSERT(concatenated_tuple == expected_tuple);
 }
 
 
