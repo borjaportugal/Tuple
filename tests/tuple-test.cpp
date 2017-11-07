@@ -99,6 +99,30 @@ TEST(tuple_cat_t_determines_the_tuple_type_that_yields_tuple_concatenation)
 	TEST_ASSERT(typeid(concatenated_tuple) == typeid(expected_tuple));
 }
 
+TEST(operator_equal_equal_works_with_tuples)
+{
+	const tuple<int, char> a{ 1, 'a' };
+	const tuple<int, char> b{ 2, 'b' };
+	const tuple<int, char> c = a;
+
+	TEST_ASSERT(a != b);
+	TEST_ASSERT(a == c);
+	TEST_ASSERT(!(a == b));
+	TEST_ASSERT(!(a != c));
+}
+
+TEST(operator_equal_equal_works_with_tuples)
+{
+	const tuple<int, char> a{ 1, 'a' };
+	const tuple<int, char> b{ 2, 'b' };
+	const tuple<int, char> c = a;
+
+	TEST_ASSERT(a != b);
+	TEST_ASSERT(a == c);
+	TEST_ASSERT(!(a == b));
+	TEST_ASSERT(!(a != c));
+}
+
 
 
 

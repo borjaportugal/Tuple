@@ -11,7 +11,12 @@ template <typename ... Ts>
 class tuple;
 
 template <>
-class tuple<> {};
+class tuple<> 
+{
+public:
+	bool operator==(const tuple &) const { return true; }
+	bool operator!=(const tuple & rhs) const { return !operator==(rhs); }
+};
 
 template <typename T, typename ... Ts>
 class tuple<T, Ts ...> : private tuple<Ts...>
@@ -26,6 +31,16 @@ public:
 		: base{ std::forward<Ts>(vs) ... }
 		, _value{ std::forward<T>(t) }
 	{}
+
+	bool operator==(const tuple & rhs) const
+	{
+		return _value == rhs._value && base::operator==(rhs);
+	}
+	bool operator!=(const tuple & rhs) const
+	{
+		return !operator==(rhs);
+	}
+
 
 	T _value;
 	
@@ -89,6 +104,13 @@ namespace impl
 	{
 		using type = tuple<Ts ...>;
 	};
+
+
+	template <typename ... Tuples>
+	auto tuple_cat(Tuples & ... tuples)
+	{
+		return;
+	}
 }
 
 // is_tuple 
