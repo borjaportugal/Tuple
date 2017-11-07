@@ -28,6 +28,8 @@ public:
 	{}
 
 	T _value;
+	
+private:
 };
 
 namespace impl
@@ -73,6 +75,20 @@ namespace impl
 	{
 		using type = T;
 	};
+
+	template <typename ... Tuples>
+	struct tuple_cat_type;
+	
+	template <typename ... Ts, typename ... Currents, typename ... Tuples>
+	struct tuple_cat_type<tuple<Ts ...>, tuple<Currents ...>, Tuples ...>
+		: public tuple_cat_type<tuple<Ts ..., Currents ...>, Tuples ...>
+	{};
+
+	template <typename ... Ts>
+	struct tuple_cat_type<tuple<Ts ...>>
+	{
+		using type = tuple<Ts ...>;
+	};
 }
 
 // is_tuple 
@@ -84,6 +100,9 @@ struct is_tuple<tuple<Ts...>> : std::true_type {};
 // tuple_element_t
 template <std::size_t I, typename Tuple>
 using tuple_element_t = typename ::impl::tuple_element_impl<I, Tuple>::type;
+
+template <typename ... Tuples>
+using tuple_cat_type_t = typename ::impl::tuple_cat_type<Tuples ...>::type;
 
 // get
 template <std::size_t I, typename ... Ts>
@@ -102,4 +121,10 @@ template <typename ... Ts>
 auto make_tuple(Ts && ... vs)
 {
 	return tuple<Ts ...>{ std::forward<Ts>(vs) ... };
+}
+
+template <typename ... Tuples>
+auto tuple_cat(Tuples & ... tuples)
+{
+	return ::impl::tuple_cat(tuples...);
 }

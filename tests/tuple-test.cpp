@@ -18,7 +18,7 @@
 //	[x] is_tuple
 //	[] tie
 //	[] tuple_cat
-//	[] tuple_element
+//	[x] tuple_element
 //	[] make_from_tuple
 //	[] forward_as_tuple
 
@@ -87,6 +87,16 @@ TEST(is_tuple_evaluates_to_true_if_the_parameter_is_a_tuple)
 
 	struct Not_a_tuple {};
 	TEST_ASSERT(!is_tuple<Not_a_tuple>::value);
+}
+
+TEST(tuple_cat_t_determines_the_tuple_type_that_yields_tuple_concatenation)
+{
+	using tuple_a = tuple<int, float, char>;
+	using tuple_b = tuple<unsigned, double>;
+
+	using concatenated_tuple = tuple_cat_type_t<tuple_a, tuple_b, tuple_a>;
+	using expected_tuple = tuple<int, float, char, unsigned, double, int, float, char>;
+	TEST_ASSERT(typeid(concatenated_tuple) == typeid(expected_tuple));
 }
 
 
