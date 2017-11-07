@@ -22,31 +22,31 @@ template <typename T, typename ... Ts>
 class tuple<T, Ts ...> : private tuple<Ts...>
 {
 public:
-	using base = tuple<Ts...>;
+	using Base = tuple<Ts...>;
 	using value_type = T;
 
 public:
 	tuple() = default;
 	tuple(T && t, Ts && ... vs)
-		: base{ std::forward<Ts>(vs) ... }
+		: Base{ std::forward<Ts>(vs) ... }
 		, _value{ std::forward<T>(t) }
 	{}
 
 	template <typename U, typename ... Us, typename ... Tuples>
 	tuple(const tuple<U, Us ...> & t, const Tuples & ... tuples)
-		: base{ (const tuple<Us...>&)t, tuples ... }
+		: Base{ (const tuple<Us...>&)t, tuples ... }
 		, _value{ get<0>(t) }
 	{}
 
 	template <typename U, typename ... Tuples>
 	tuple(const tuple<U> & t, const Tuples & ... tuples)
-		: base{ tuples ... }
+		: Base{ tuples ... }
 		, _value{ get<0>(t) }
 	{}
 
 	bool operator==(const tuple & rhs) const
 	{
-		return _value == rhs._value && base::operator==(rhs);
+		return _value == rhs._value && Base::operator==(rhs);
 	}
 	bool operator!=(const tuple & rhs) const
 	{
@@ -89,19 +89,20 @@ namespace impl
 
 	// tuple_element_impl
 	template <std::size_t I, typename T>
-	struct tuple_element_impl;
+	struct tuple_element;
 
 	template <std::size_t I, typename T, typename ... Ts>
-	struct tuple_element_impl<I, tuple<T, Ts ...>>
-		: public tuple_element_impl<I - 1, tuple<Ts ...>>
+	struct tuple_element<I, tuple<T, Ts ...>>
+		: public tuple_element<I - 1, tuple<Ts ...>>
 	{};
 
 	template <typename T, typename ... Ts>
-	struct tuple_element_impl<0, tuple<T, Ts ...>>
+	struct tuple_element<0, tuple<T, Ts ...>>
 	{
 		using type = T;
 	};
 
+	// tuple_cat_type
 	template <typename ... Tuples>
 	struct tuple_cat_type;
 	
@@ -125,12 +126,15 @@ struct is_tuple<tuple<Ts...>> : std::true_type {};
 
 // tuple_element_t
 template <std::size_t I, typename Tuple>
-using tuple_element_t = typename ::impl::tuple_element_impl<I, Tuple>::type;
+using tuple_element_t = typename ::impl::tuple_element<I, Tuple>::type;
 
+// tuple_cat_type_t
 template <typename ... Tuples>
 using tuple_cat_type_t = typename ::impl::tuple_cat_type<Tuples ...>::type;
 
-// get
+
+
+
 template <std::size_t I, typename ... Ts>
 auto & get(tuple<Ts ...> & t)
 {
@@ -142,7 +146,6 @@ const auto & get(const tuple<Ts ...> & t)
 	return ::impl::tuple_get_impl<I, Ts...>::get(t);
 }
 
-// make_tuple
 template <typename ... Ts>
 auto make_tuple(Ts && ... vs)
 {

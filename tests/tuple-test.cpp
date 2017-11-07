@@ -16,7 +16,7 @@
 //	[] make_tuple getting references
 //	[x] get
 //	[x] is_tuple
-//	[] tie
+//	[x] tie
 //	[x] tuple_cat
 //	[x] tuple_element
 //	[] make_from_tuple
