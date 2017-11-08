@@ -19,7 +19,7 @@
 //	[x] tie
 //	[x] tuple_cat
 //	[x] tuple_element
-//	[] make_from_tuple
+//	[x] make_from_tuple
 //	[] forward_as_tuple
 
 TEST(tuple_can_take_any_type_of_arguments)

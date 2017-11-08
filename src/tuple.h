@@ -118,6 +118,7 @@ namespace impl
 		using type = tuple<Ts ...>;
 	};
 
+	// make_from_tuple
 	template <typename T, typename Tuple, std::size_t ... Is>
 	T make_from_tuple(Tuple & t, std::integer_sequence<std::size_t, Is...>)
 	{
@@ -183,4 +184,5 @@ T make_from_tuple(const tuple<Ts ...> & t)
 {
 	return ::impl::make_from_tuple<T>(t, std::make_integer_sequence<std::size_t, sizeof...(Ts)>{});
 }
+
 
