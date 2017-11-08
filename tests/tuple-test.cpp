@@ -166,6 +166,67 @@ TEST(changing_values_on_a_tuple_returned_by_tie_changed_the_original_variables)
 	TEST_ASSERT(c == 'd');
 }
 
+TEST(make_from_tuple_forwards_the_tuple_values_to_the_object_constructor)
+{
+	struct SomeStructure
+	{
+		SomeStructure(int ii, char cc, float ff)
+			: i{ ii }
+			, c{ cc }
+			, f{ ff }
+		{}
+
+		int i{ 0 };
+		char c{ 0 };
+		float f{ 0.f };
+	};
+
+	const int i = 'g';
+	const char c = 5;
+	const float f = 8.14f;
+
+	const tuple<int, char, float> args{ i, c, f };
+	const SomeStructure result = make_from_tuple<SomeStructure>(args);
+
+	TEST_ASSERT(result.i == i);
+	TEST_ASSERT(result.c == c);
+	TEST_ASSERT(result.f == f);
+}
+
+TEST(make_from_tuple_also_works_for_references)
+{
+	struct SomeStructure
+	{
+		SomeStructure(int ii, char & cc, float ff)
+			: i{ ii }
+			, c{ cc }
+			, f{ ff }
+		{}
+
+		int i{ 0 };
+		char & c;
+		float f{ 0.f };
+	};
+
+	const int i = 'g';
+	char c = 5;
+	const float f = 8.14f;
+
+	tuple<int, char &, float> args{ 'g', c, 8.14f };
+	const SomeStructure result = make_from_tuple<SomeStructure>(args);
+
+	TEST_ASSERT(result.i == i);
+	TEST_ASSERT(result.c == c);
+	TEST_ASSERT(result.f == f);
+
+	c = 10;
+
+	TEST_ASSERT(result.i == i);
+	TEST_ASSERT(result.c == c);
+	TEST_ASSERT(result.f == f);
+}
+
+
 
 
 

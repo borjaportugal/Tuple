@@ -27,9 +27,10 @@ public:
 
 public:
 	tuple() = default;
-	tuple(T && t, Ts && ... vs)
-		: Base{ std::forward<Ts>(vs) ... }
-		, _value{ std::forward<T>(t) }
+	template <typename U, typename ... Us>
+	tuple(U && t, Us && ... vs)
+		: Base{ std::forward<Us>(vs) ... }
+		, _value{ std::forward<U>(t) }
 	{}
 
 	template <typename U, typename ... Us, typename ... Tuples>
@@ -116,6 +117,12 @@ namespace impl
 	{
 		using type = tuple<Ts ...>;
 	};
+
+	template <typename T, typename Tuple, std::size_t ... Is>
+	T make_from_tuple(Tuple & t, std::integer_sequence<std::size_t, Is...>)
+	{
+		return T(get<Is>(t) ...);
+	}
 }
 
 // is_tuple 
@@ -164,3 +171,16 @@ auto tie(Ts & ... vs)
 {
 	return tuple<Ts & ...>{ vs ... };
 }
+
+template <typename T, typename ... Ts>
+T make_from_tuple(tuple<Ts ...> & t)
+{
+	return ::impl::make_from_tuple<T>(t, std::make_integer_sequence<std::size_t, sizeof...(Ts)>{});
+}
+
+template <typename T, typename ... Ts>
+T make_from_tuple(const tuple<Ts ...> & t)
+{
+	return ::impl::make_from_tuple<T>(t, std::make_integer_sequence<std::size_t, sizeof...(Ts)>{});
+}
+
