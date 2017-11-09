@@ -124,35 +124,6 @@ namespace impl
 	{
 		return T(get<Is>(t) ...);
 	}
-
-	template <typename T>
-	struct tuple_ref_wrap
-	{
-		tuple_ref_wrap(T & ref)
-			: _ref(ref)
-		{}
-
-		operator T &() { return _ref; }
-		operator T &() const { return _ref; }
-
-		T & _ref;
-		using type = T &;
-	};
-
-	template <typename T>
-	struct resolve_ref_warp
-	{
-		using type = T;
-	};
-
-	template <typename T>
-	struct resolve_ref_warp<tuple_ref_wrap<T>>
-	{
-		using type = T &;
-	};
-
-	template <typename T>
-	using resolve_ref_warp_t = typename resolve_ref_warp<T>::type;
 }
 
 // is_tuple 
@@ -171,11 +142,6 @@ using tuple_cat_type_t = typename ::impl::tuple_cat_type<Tuples ...>::type;
 
 
 
-template <typename T>
-::impl::tuple_ref_wrap<T> tuple_ref(T & t)
-{
-	return{ t };
-}
 
 template <std::size_t I, typename ... Ts>
 auto & get(tuple<Ts ...> & t)
@@ -191,8 +157,7 @@ const auto & get(const tuple<Ts ...> & t)
 template <typename ... Ts>
 auto make_tuple(Ts && ... vs)
 {
-	using tuple_type = tuple<::impl::resolve_ref_warp_t<Ts> ...>;
-	return tuple_type{ std::forward<::impl::resolve_ref_warp_t<Ts>>(vs) ... };
+	return tuple<Ts ...>{ std::forward<Ts>(vs) ... };
 }
 
 template <typename ... Tuples>

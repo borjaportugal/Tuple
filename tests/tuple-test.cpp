@@ -13,7 +13,7 @@
 // 
 //	[x] tuple can store any number of arguments
 //	[x] make_tuple
-//	[x] make_tuple getting references
+//	[] make_tuple getting references
 //	[x] get
 //	[x] is_tuple
 //	[x] tie
@@ -71,39 +71,6 @@ TEST(make_tuple_works_as_expected)
 	TEST_ASSERT(get<1>(my_tuple) == 1.f);
 	TEST_ASSERT(get<2>(my_tuple) == 'a');
 }
-
-TEST(make_tuple_works_with_references)
-{
-	char c = 'h';
-	auto my_tuple = make_tuple(300, tuple_ref(c));
-	TEST_ASSERT(typeid(my_tuple) == typeid(tuple<int, char &>));
-
-	TEST_ASSERT(get<0>(my_tuple) == 300);
-	TEST_ASSERT(get<1>(my_tuple) == 'h');
-	
-	c = '@';
-	TEST_ASSERT(get<0>(my_tuple) == 300);
-	TEST_ASSERT(get<1>(my_tuple) == '@');
-
-	get<1>(my_tuple) = '#';
-	TEST_ASSERT(get<0>(my_tuple) == 300);
-	TEST_ASSERT(get<1>(my_tuple) == '#');
-}
-
-TEST(make_tuple_works_with_const_references)
-{
-	char c = 'h';
-	const auto my_tuple = make_tuple(300, tuple_ref(c));
-	TEST_ASSERT(typeid(my_tuple) == typeid(tuple<int, char &>));
-
-	TEST_ASSERT(get<0>(my_tuple) == 300);
-	TEST_ASSERT(get<1>(my_tuple) == 'h');
-
-	c = '@';
-	TEST_ASSERT(get<0>(my_tuple) == 300);
-	TEST_ASSERT(get<1>(my_tuple) == '@');
-}
-
 
 TEST(tuple_element_t_is_the_type_at_the_provided_index)
 {
