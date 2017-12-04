@@ -1,5 +1,10 @@
 /*!
 \author Borja Portugal Martin
+
+GitHub: https://github.com/borjaportugal
+
+This file is subject to the license terms in the LICENSE file
+found in the top-level directory of this distribution.
 */
 
 #pragma once
@@ -44,6 +49,14 @@ public:
 		: Base{ tuples ... }
 		, _value{ get<0>(t) }
 	{}
+
+	template <typename U, typename ... Us>
+	tuple<Ts...> & operator=(const tuple<U, Us...> & rhs)
+	{
+		Base::operator=((const tuple<Us...> &)(rhs));
+		_value = rhs._value;
+		return *this;
+	}
 
 	bool operator==(const tuple & rhs) const
 	{
@@ -153,7 +166,18 @@ namespace impl
 
 	template <typename T>
 	using resolve_ref_warp_t = typename resolve_ref_warp<T>::type;
+
+	struct tuple_ignore_t 
+	{
+		template <typename T>
+		tuple_ignore_t & operator=(const T &)
+		{
+			return *this;
+		}
+	};
 }
+
+static ::impl::tuple_ignore_t ignore;
 
 // is_tuple 
 template <typename T>
@@ -203,9 +227,9 @@ auto tuple_cat(const Tuples & ... tuples)
 }
 
 template <typename ... Ts>
-auto tie(Ts & ... vs)
+auto tie(Ts && ... vs)
 {
-	return tuple<Ts & ...>{ vs ... };
+	return tuple<Ts ...>{ std::forward<Ts>(vs) ... };
 }
 
 template <typename T, typename ... Ts>

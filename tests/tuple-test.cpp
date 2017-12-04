@@ -1,6 +1,11 @@
 /*!
 \author Borja Portugal Martin
 \brief  All tests that make sure a correct implementation of tuple<>
+
+GitHub: https://github.com/borjaportugal
+
+This file is subject to the license terms in the LICENSE file
+found in the top-level directory of this distribution.
 */
 
 #include "src/tuple.h"
@@ -20,6 +25,7 @@
 //	[x] tuple_cat
 //	[x] tuple_element
 //	[x] make_from_tuple
+//	[] ignore
 //	[] forward_as_tuple
 
 TEST(tuple_can_take_any_type_of_arguments)
@@ -198,6 +204,29 @@ TEST(changing_values_on_a_tuple_returned_by_tie_changed_the_original_variables)
 	TEST_ASSERT(d == 7.0);
 	TEST_ASSERT(c == 'd');
 }
+TEST(tie_ca_be_used_as_lhs_in_assignments)
+{
+	int i = 0;
+	double d = 0.0;
+	char c = 0;
+
+	tie(d, i, c) = []() { return make_tuple(7.0, 10, 'd'); }();
+	
+	TEST_ASSERT(i == 10);
+	TEST_ASSERT(d == 7.0);
+	TEST_ASSERT(c == 'd');
+}
+TEST(tie_can_take_as_a_parameter_ignore)
+{
+	double d = 0.0;
+	char c = 0;
+
+	tie(d, ignore, c) = []() -> tuple<double, int, char> { return make_tuple(7.0, 10, 'd'); }();
+
+	TEST_ASSERT(d == 7.0);
+	TEST_ASSERT(c == 'd');
+}
+
 
 TEST(make_from_tuple_forwards_the_tuple_values_to_the_object_constructor)
 {
